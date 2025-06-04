@@ -8,8 +8,8 @@ from datetime import datetime, timedelta
 TELEGRAM_TOKEN = "8108005261:AAEi2TRiGiw4JusJLGfoRvUJaFRvuxdPZTo"
 TELEGRAM_CHAT_ID = "1604163126"
 
-WEBSITE_FILE = "C:\\Users\\Talvie IT\\Desktop\\monitor.txt"
-LOG_DIR = "C:\\Users\\Talvie IT\\Desktop\\logs"
+WEBSITE_FILE = "monitor.txt"
+LOG_DIR = "log"
 
 CHECK_INTERVAL = 15  # giây
 DURATION = 60 * 60  # 1 tiếng
