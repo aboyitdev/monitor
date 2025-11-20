@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gửi người tớ thương</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS Reset & Base --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+            font-family: 'Quicksand', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* --- Hiệu ứng nền lung linh --- */
+        .background-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.2) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        /* --- Container chính (Hiệu ứng kính - Glassmorphism) --- */
+        .card {
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            width: 90%;
+            max-width: 600px;
+            padding: 40px;
+            text-align: center;
+            z-index: 10;
+            position: relative;
+            transition: transform 0.5s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* --- Các thành phần bên trong --- */
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            color: #d63384;
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .message-box {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #4a4a4a;
+            min-height: 150px;
+            margin-bottom: 30px;
+        }
+
+        .heart-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+
+        .heart-btn:hover {
+            background: #ff6b81;
+            transform: scale(1.05);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* --- Ảnh đại diện (Avatar) --- */
+        .avatar-container {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 5px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .avatar-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* --- Animations --- */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(255, 71, 87, 0.6); }
+            100% { transform: scale(1); }
+        }
+
+        /* Tim bay */
+        .floating-heart {
+            position: absolute;
+            color: #ff4757;
+            animation: floatUp 4s linear forwards;
+            font-size: 20px;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            10% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 480px) {
+            h1 { font-size: 2.5rem; }
+            .card { padding: 25px; width: 95%; }
+            .message-box { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="background-overlay"></div>
+
+    <div class="card" id="intro-screen">
+        <h1>Hé lô người đẹp!</h1>
+        <p style="margin-bottom: 30px; font-size: 1.1rem;">Có một điều bất ngờ nhỏ dành cho em...</p>
+        <button class="heart-btn" onclick="openLetter()">Nhấn vào đây nè ❤️</button>
+    </div>
+
+    <div class="card hidden" id="content-screen">
+        <div class="avatar-container">
+            <img src="https://i.pinimg.com/564x/d2/a6/20/d2a6202bbb7f31d71674512f3736877b.jpg" alt="Couple Photo">
+        </div>
+        <h1>Gửi Em!</h1>
+        <div class="message-box" id="typewriter-text"></div>
+        <p style="font-size: 0.9rem; color: #666; margin-top: 20px;">Yêu em nhiều lắm!</p>
+    </div>
+
+    <script>
+        // --- CẤU HÌNH LỜI CHÚC TẠI ĐÂY ---
+        const message = "Chào em, cô gái của anh! \n\nAnh làm trang web nhỏ này chỉ để nói là anh nhớ em và yêu em rất nhiều. Cảm ơn em đã luôn ở bên cạnh anh, mang lại niềm vui và nụ cười cho anh mỗi ngày. \n\nMãi yêu em! ❤️";
+        
+        const speed = 50; // Tốc độ gõ chữ (càng nhỏ càng nhanh)
+        let i = 0;
+
+        // Hàm tạo hiệu ứng gõ chữ
+        function typeWriter() {
+            if (i < message.length) {
+                const char = message.charAt(i);
+                // Xử lý xuống dòng
+                if (char === '\n') {
+                    document.getElementById("typewriter-text").innerHTML += "<br>";
+                } else {
+                    document.getElementById("typewriter-text").innerHTML += char;
+                }
+                i++;
+                setTimeout(typeWriter, speed);
+            }
+        }
+
+        // Hàm chuyển cảnh khi bấm nút
+        function openLetter() {
+            document.getElementById("intro-screen").classList.add("hidden");
+            document.getElementById("content-screen").classList.remove("hidden");
+            
+            // Bắt đầu gõ chữ
+            typeWriter();
+
+            // Bắt đầu mưa tim
+            setInterval(createHeart, 300);
+        }
+
+        // Hàm tạo tim bay lung linh
+        function createHeart() {
+            const heart = document.createElement("div");
+            heart.classList.add("floating-heart");
+            heart.innerHTML = "❤️";
+            
+            // Random vị trí và kích thước
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.fontSize = (Math.random() * 20 + 10) + "px";
+            heart.style.animationDuration = (Math.random() * 3 + 2) + "s";
+            
+            document.body.appendChild(heart);
+
+            // Xóa tim sau khi bay xong để nhẹ web
+            setTimeout(() => {
+                heart.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
